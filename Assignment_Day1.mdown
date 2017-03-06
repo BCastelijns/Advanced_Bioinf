@@ -39,6 +39,7 @@ Chromosome  int,
 Position    int,
 Ref         varchar(1),
 Alt         varchar(1),
-Info        varchar(255)
+Info        varchar(255),
+Foreign Key (PersonID) References Samples(PersonID)
 );
 ```
