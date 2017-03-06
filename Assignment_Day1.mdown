@@ -1,8 +1,8 @@
 Day 1 Assignments 
 
-# Post your favourite >=3 Table join statement from Test database
-### Select All beverage orders and sum how much has been spent on them per country 
+### Post your favourite >=3 Table join statement from Test database
 
+Select All beverage orders and sum how much has been spent on them per country 
 ``` sql
 SELECT Categories.CategoryName, Customers.Country, SUM(Products.Price*OrderDetails.Quantity) AS TotalAmount FROM Categories
 JOIN Products
@@ -19,7 +19,7 @@ ORDER BY TotalAmount
 
 ```
 
-# Design SQL statement to create two tables to store mutations and samples
+### Design SQL statement to create two tables to store mutations and samples
 
 ``` sql
 CREATE TABLE Samples
