@@ -20,25 +20,25 @@ ORDER BY TotalAmount
 ```
 
 ### Design SQL statement to create two tables to store mutations and samples
-
 ``` sql
 CREATE TABLE Samples
 (
-PersonID int,
-Age int,
-Gender varchar(255),
-Diseased boolean,
+PersonID    int Primary Key,
+Age         int,
+Gender      varchar(255),
+Diseased    boolean,
 Nationality varchar(255)
 );
 
+
 CREATE TABLE Mutations
 (
-MutationID int,
-PersonID int,
-Chromosome varchar(255),
-Location int,
-Ref varchar(255),
-Alt varchar(255),
-Info varchar(255)
+MutationID  int,
+PersonID    int,
+Chromosome  int,
+Position    int,
+Ref         varchar(1),
+Alt         varchar(1),
+Info        varchar(255)
 );
 ```
