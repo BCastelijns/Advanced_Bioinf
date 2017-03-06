@@ -33,7 +33,7 @@ Nationality varchar(255)
 
 CREATE TABLE Mutations
 (
-MutationID  int,
+MutationID  int Primary Key,
 PersonID    int,
 Chromosome  int,
 Position    int,
