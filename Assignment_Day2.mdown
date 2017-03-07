@@ -2,6 +2,8 @@ Day 2 Assignments
 
 ### Excercise 1
 
+Write a Python script which queries the PIK3CA VCF file for the annotation as in "db.vcf.find({"rec.ann": /ENST00000263967/i }).count()"
+
 ``` python
 ### json gatk_template
 #{
@@ -23,15 +25,26 @@ Day 2 Assignments
 
 
 ### Python script to retrieve number of occurences of transcript ENST00000263967
+
+# load library
 from pymongo import MongoClient
 
+# select client
 client = MongoClient()
+
+# select database
 db = client.PIK3CA
+
+# get all data that matches string and count
 cursor = db.vcf.find({'rec.ann': {'$regex': 'ENST00000263967'}}).count()
+
+# print result
 print cursor
 ```
 
 ### Excercise 2
+
+Write a Python mongo script which queries the PIK3CA file for something similar to cat " gene_PIK3CA.vcf |bio-vcf --sfilter-samples 2,3  --seval s.dp --sfilter "s.dp>7" "
 
 ``` python
 ### json gatk_template_exc2
@@ -60,15 +73,20 @@ print cursor
 
 ### python script to count the number of variants that have a dp > 7 for samples 3 & 4
 
+# load library
 from pymongo import MongoClient
 
 client = MongoClient()
 db = client.PIK3CA_exc2
 
+# get all the data from the database
 cursor = db.vcf.find()
 
+# initiate the counter
 number = 0
 
+# loop over all entries in the database. Select sample 3 & 4 and check their readdepth
+# Print out chromosome, position and sample depth for all variants with both sample 3 & 4 > 7
 for i in cursor:
 	mutation_info = i[u'rec']
 	sample_depth = mutation_info[u'samples'][2:4]
@@ -82,13 +100,4 @@ for i in cursor:
 		number += 1
 
 print "total number of variants = %s"%number
-
 ```
-
-
-
-
-
-
-
-
