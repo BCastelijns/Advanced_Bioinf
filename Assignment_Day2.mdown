@@ -1,0 +1,94 @@
+Day 2 Assignments 
+
+### Excercise 1
+
+``` python
+### json gatk_template
+#{
+#  "rec": {
+#            "chr": "<%= rec.chrom %>",
+#            "pos": <%= rec.pos %>,
+#            "ref": "<%= rec.ref %>",
+#            "alt": "<%= rec.alt[0] %>",
+#            "dp":  <%= rec.info.dp %>,
+#            "ann":  '"<%= rec.info.ann %>"'
+#   }
+#}
+
+### Create json file from PIK3CA.vcf
+# cat gene_PIK3CA.vcf |bio-vcf --template gatk_template.json --num-threads 2 > PIK3CA.json
+
+### Import PIK3CA into mongo
+# mongoimport --db PIK3CA --collection vcf --drop --file PIK3CA.json 
+
+
+### Python script to retrieve number of occurences of transcript ENST00000263967
+from pymongo import MongoClient
+
+client = MongoClient()
+db = client.PIK3CA
+cursor = db.vcf.find({'rec.ann': {'$regex': 'ENST00000263967'}}).count()
+print cursor
+```
+
+### Excercise 2
+
+``` python
+### json gatk_template_exc2
+#{
+#  "rec": {
+#            "chr": "<%= rec.chrom %>",
+#            "pos": <%= rec.pos %>,
+#            "ref": "<%= rec.ref %>",
+#            "alt": "<%= rec.alt[0] %>",
+#            "dp":  <%= rec.info.dp %>,
+#            "samples": [
+#              <%=
+#              a = []
+#              rec.each_sample { |s| a.push s.dp }
+#              a.join(',')
+#              %>
+#   ]
+#  }
+#}
+
+### Create a new json file from PIK3CA.vcf
+# cat gene_PIK3CA.vcf |bio-vcf --template gatk_template_exc2.json --num-threads 2 > PIK3CA_exc2.json 
+
+### Import PIK3CA into mongo
+# mongoimport --db PIK3CA_exc2 --collection vcf --drop --file PIK3CA_exc2.json
+
+### python script to count the number of variants that have a dp > 7 for samples 3 & 4
+
+from pymongo import MongoClient
+
+client = MongoClient()
+db = client.PIK3CA_exc2
+
+cursor = db.vcf.find()
+
+number = 0
+
+for i in cursor:
+	mutation_info = i[u'rec']
+	sample_depth = mutation_info[u'samples'][2:4]
+	#print sample_depth
+	if all(i > 7 for i in sample_depth):
+		chrom = mutation_info[u'chr']
+		position = mutation_info[u'pos']
+		sample3 = sample_depth[0]
+		sample4 = sample_depth[1]
+		print chrom, position, sample3, sample4
+		number += 1
+
+print "total number of variants = %s"%number
+
+```
+
+
+
+
+
+
+
+
