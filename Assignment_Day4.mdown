@@ -1,0 +1,56 @@
+Create a graph database using bio-vcf and define a SPARQL querry to access the data
+
+``` python
+
+### RDF template used
+
+#=HEADER
+#@prefix : <http://bcastelijns.org/rdf/ns#> .
+#=BODY
+#<%
+#id = ['chr'+rec.chr,rec.pos,rec.ref,rec.alt].join('_')
+#%>
+#:<%= id %>
+#  :query_id "<%= id %>";
+#  :chr "<%= rec.chr %>" ;
+#  :ref "<%= rec.ref %>" ;
+#  :alt "<%= rec.alt.join("") %>" ;
+#  :pos <%= rec.pos %> .
+  
+
+## From the PIC3CA.vcf file, create a rdf file
+#cat gene_PIK3CA.vcf | bio-vcf -v --template rdf_template2.erb --num-threads 2 > PIK3CA.rdf
+
+##Upload the rdf file to the 4store server (http://guix.genenetwork.org)
+#rdf=PIK3CA.rdf
+#uri=http://guix.genenetwork.org/data/http://biobeat.org/data/$rdf
+#curl -X DELETE $uri
+#curl -T $rdf -H 'Content-Type: application/x-turtle' $uri
+
+## Python script to run a querry:
+## select all the variants that have a reference allele T and a pos > 178922277 and print the ID - Alt - position
+
+import requests
+import subprocess
+import sys
+
+host = "http://guix.genenetwork.org/"
+
+## select all the variants that have a reference allele T and a pos > 178922277
+## for those regions, print the Alternative allele and select 
+query = """
+PREFIX : <http://bcastelijns.org/rdf/ns#>
+SELECT * {
+    ?s :ref "T" .
+    ?s :alt ?alt .
+    ?s :pos ?pos .
+    FILTER (?pos > 178922277) .
+} 
+"""
+
+r = requests.post(host + "sparql/", data={ "query": query, "output": "text" })
+if r.status_code != requests.codes.ok:
+    sys.exit(1)
+
+print r.text
+```
